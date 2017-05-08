@@ -5,54 +5,22 @@ import java.io.InputStreamReader;
 import java.lang.String;
 import java.io.BufferedReader;
 
-/*
-letras:
-a-z: 1-26
-A-Z: 27-52
-
-ASCII:
-a-z: 97-122
-A-Z: 65-90
-
-Convertendo:
-a: 1+96 = 97
-h: 8+96 = 104
-
-A: 1+64 = 65
-H: 8+64 = 72
-
-As palavras vao variar de 1-20 caracteres
-*/
-
-
 public class Caelum{
     public static void main(String[] args) throws IOException {
-        Integer num;
-
-
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("O programa se encerra apos digitar somente # e apertar o Enter");
-        System.out.print("Digite uma palavra: ");
-        String s = br.readLine();
+        Integer num;
+        String s = lePalavra();
 
         while(!s.equals("#")){
-            if(checkTamanho(s)){
-                s = checkPalavra(s);
-                num = getNumeros(s);
-                if(isPrimo(num))
-                {
-                    System.out.println("It is a prime word."+"\n");
-                }else{
-                    System.out.println("It is not a prime word."+"\n");
-                }
+            s = conferePalavra(s);
+            num = somaNumeros(s);
+            if(conferePrimo(num))
+            {
+                System.out.println("It is a prime word."+"\n");
             }else{
-                System.out.println("Limite da palavra nao respeitado!"+"\n"+
-                        "O tamanho da palavra deve estar entre 1 e 20"+"\n" +
-                        "Tente novamente"+"\n");
+                System.out.println("It is not a prime word."+"\n");
             }
-
-            System.out.print("Digite uma palavra: ");
-            s = br.readLine();
+            s = lePalavra();
         }
 
         System.out.println("Fim");
@@ -60,9 +28,29 @@ public class Caelum{
     }
 
     /*
-        Soma as palavras em seu valor convertido
+    Metodo: lePalavra()
+    Sumario: Le a palavra inserida pelo usuario, conferindo seu tamanho
+    Parametros: Nao recebe
+    Retorna: Uma string contendo a palavra escrita
      */
-    public static Integer getNumeros(String s){
+    public static String lePalavra() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        String s = br.readLine();
+        while(!confereTamanho(s)){
+            System.out.println("Limite da palavra nao respeitado!"+"\n"+
+                    "O tamanho da palavra deve estar entre 1 e 20"+"\n" +
+                    "Tente novamente");
+            s = br.readLine();
+        }
+        return s;
+    }
+    /*
+    Metodo: somaNumeros(String s)
+    Sumario: Soma os valores de cada letra
+    Parametros: Recebe a string inserida
+    Retorna: Um inteiro com a soma dos valores
+     */
+    public static Integer somaNumeros(String s){
         int soma=0;
         for(int i=0; i<s.length();i++){
             soma += conversorPalavra(s.charAt(i));
@@ -71,45 +59,58 @@ public class Caelum{
     }
 
     /*
-        Converte cada letra da String e
-         retorna seu valor denominado
+    Metodo: conversorPalavra(char c)
+    Sumario: Converte as letras da palavra inserida retornando seu valor delimitado
+    Parametros: Recebe cada letra da palavra
+    Retorna: Um inteiro com o valor da letra
      */
     public static Integer conversorPalavra(char c){
-        int count;
+        int contador;
         if(Character.isUpperCase(c)){
-            count = (int)c - 38;
+            contador = (int)c - 38;
         }else{
-            count = (int)c - 96;
+            contador = (int)c - 96;
         }
-        return count;
+        return contador;
     }
 
-    /* Metodo: checkPalavra(String s)
-        Checa se a palavra possui espacos, caracteres especiais,
-        numeros e retorna a palavra(String) somente com letras.
-    */
-    public static String checkPalavra(String s){
-        String result;
-        result = s.trim();
-        char[] aux = new char[result.length()];
-        for(int i = 0;i < result.length(); i++){
-            if(Character.isLetter(result.charAt(i))){
-                aux[i]+=result.charAt(i);
+    /*
+    Metodo: conferePalavra(String s)
+    Sumario: Retira qualquer caracter especial, numero, espaço em branco
+    Parametros: Recebe a palavra inserida
+    Retorna: A string (palavra) devidamente formatada
+     */
+    public static String conferePalavra(String s){
+        String resultado;
+        resultado = s.trim();
+        char[] aux = new char[resultado.length()];
+        for(int i = 0;i < resultado.length(); i++){
+            if(Character.isLetter(resultado.charAt(i))){
+                aux[i]+=resultado.charAt(i);
             }
         }
-        result = String.valueOf(aux);
-        result = result.replace("\u0000", "");
-        return result;
+        resultado = String.valueOf(aux);
+        resultado = resultado.replace("\u0000", "");
+        return resultado;
     }
 
-    /* Metodo: checkTamanho(String s)
-        Checa se a palavra esta dentro do limite determinado.
-    */
-    public static Boolean checkTamanho(String s){
+    /*
+    Metodo: confereTamanho(String s)
+    Sumario: Confere se a palavra inserida esta no limite previsto, entre 1 e 20 letras
+    Parametros: Recebe a palavra inserida
+    Retorna: Um booleano com a verificacao
+     */
+    public static Boolean confereTamanho(String s){
         return s.length() <= 20 && s.length() > 0 ;
     }
 
-    public static Boolean isPrimo(Integer n){
+    /*
+    Metodo: conferePrimo(Integer n)
+    Sumario: Confere se o numero e primo, ou nao
+    Parametros: Recebe a soma dos valores de cada letra
+    Retorna: Um booleano com a verificacao
+     */
+    public static Boolean conferePrimo(Integer n){
         if(n%2 == 0 && n>2){
             return false;
         }
